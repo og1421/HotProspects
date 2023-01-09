@@ -6,28 +6,37 @@
 //
 
 import SwiftUI
+import UserNotifications
 
 struct ContentView: View {
     @State private var backgroundColor = Color.red
     
     var body: some View {
-        List {
-            Text("Taylor Swift")
-                .swipeActions {
-                    Button(role: .destructive) {
-                        print("Delete")
-                    } label: {
-                        Label ("delete", systemImage: "minus.circle")
+        VStack{
+            Button("Request Permission") {
+                UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound] ){
+                    success, error in
+                    
+                    if success {
+                        print("All set")
+                    } else if let  error = error {
+                        print(error.localizedDescription)
                     }
                 }
-                .swipeActions(edge: .leading){
-                    Button{
-                        print("Pinning")
-                    } label: {
-                        Label("Pin", systemImage: "pin")
-                    }
-                    .tint(.orange)
-                }
+            }
+            
+            Button("Schedule notification") {
+                let content = UNMutableNotificationContent()
+                content.title = "Feed the dogs"
+                content.subtitle = "They look hungry"
+                content.sound = UNNotificationSound.default
+                
+                let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 5, repeats: false)
+                
+                let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
+                
+                UNUserNotificationCenter.current().add(request)
+            }
         }
     }
 }
