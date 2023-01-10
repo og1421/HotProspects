@@ -13,3 +13,11 @@ class Prospect: Identifiable, Codable {
     var emailAdress = ""
     var isContacted = false
 }
+
+@MainActor class Prospects: ObservableObject {
+    @Published var people: [Prospect]
+
+    init() {
+        self.people = []
+    }
+}
