@@ -32,6 +32,13 @@ struct MeView: View {
                     .interpolation(.none)
                     .scaledToFit()
                     .frame(width: 200, height: 200)
+                    .contextMenu{
+                        Button {
+                            //save my code
+                        } label: {
+                            Label("Save to photos", systemImage: "square.and.arrow.down")
+                        }
+                    }
             }
             .navigationTitle("Your code")
         }
