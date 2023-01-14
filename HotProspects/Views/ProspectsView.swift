@@ -22,14 +22,20 @@ struct ProspectsView: View {
     var body: some View {
         NavigationView {
             List (filteredProspecets) { prospect in
-                VStack(alignment: .leading) {
-                    Text(prospect.name)
-                        .font(.headline)
+                HStack{
+                    Image(systemName: "circle.fill")
+                        .foregroundColor(prospect.isContacted ? .green : .red)
+                        
                     
-                    Text(prospect.emailAdress)
-                        .foregroundColor(.secondary)
-                    
-                    
+                    VStack(alignment: .leading) {
+                        Text(prospect.name)
+                            .font(.headline)
+                        
+                        Text(prospect.emailAdress)
+                            .foregroundColor(.secondary)
+                        
+                        
+                    }
                 }
                 .swipeActions{
                     if prospect.isContacted {
