@@ -16,24 +16,50 @@ class Prospect: Identifiable, Codable {
 
 @MainActor class Prospects: ObservableObject {
     @Published private(set) var people: [Prospect]
-    let saveKey = "SavedData"
+    let saveKey = "data.json"
 
     init() {
-        if let data = UserDefaults.standard.data(forKey: saveKey) {
-            if let decoded = try? JSONDecoder().decode([Prospect].self, from: data){
-                people = decoded
-                
-                return
-            }
+        let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+        
+        let url = documentsDirectory.appendingPathComponent(saveKey)
+        
+        guard let data = try? Data(contentsOf: url)  else {
+            self.people = []
+            return
         }
         
-        //no saved data
-        people = []
+        do {
+            people = try JSONDecoder().decode([Prospect].self, from: data)
+        } catch {
+            print("Error decoding the file \(error.localizedDescription)")
+            self.people = []
+        }
+        
+//        if let data = UserDefaults.standard.data(forKey: saveKey) {
+//            if let decoded = try? JSONDecoder().decode([Prospect].self, from: data){
+//                people = decoded
+//
+//                return
+//            }
+//        }
+//
+//        //no saved data
+//        people = []
     }
     
     private func save() {
-        if let encode = try? JSONEncoder().encode(people){
-            UserDefaults.standard.set(encode, forKey: saveKey)
+        guard let jsonFile = try? JSONEncoder().encode(people) else {
+            return
+        }
+        
+        let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+        
+        let fileURL = documentsDirectory.appendingPathComponent(saveKey)
+        
+        do {
+            try jsonFile.write(to: fileURL)
+        } catch {
+            print("Can't save in directory \(error.localizedDescription)")
         }
     }
     
